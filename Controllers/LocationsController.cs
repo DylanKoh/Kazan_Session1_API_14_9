@@ -14,105 +14,16 @@ namespace Kazan_Session1_API_14_9.Controllers
     {
         private Session1Entities db = new Session1Entities();
 
-        // GET: Locations
+        public LocationsController()
+        {
+            db.Configuration.LazyLoadingEnabled = false;
+        }
+
+        // POST: Locations
+        [HttpPost]
         public ActionResult Index()
         {
-            return View(db.Locations.ToList());
-        }
-
-        // GET: Locations/Details/5
-        public ActionResult Details(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Location location = db.Locations.Find(id);
-            if (location == null)
-            {
-                return HttpNotFound();
-            }
-            return View(location);
-        }
-
-        // GET: Locations/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Locations/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Name")] Location location)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Locations.Add(location);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(location);
-        }
-
-        // GET: Locations/Edit/5
-        public ActionResult Edit(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Location location = db.Locations.Find(id);
-            if (location == null)
-            {
-                return HttpNotFound();
-            }
-            return View(location);
-        }
-
-        // POST: Locations/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Name")] Location location)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(location).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(location);
-        }
-
-        // GET: Locations/Delete/5
-        public ActionResult Delete(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Location location = db.Locations.Find(id);
-            if (location == null)
-            {
-                return HttpNotFound();
-            }
-            return View(location);
-        }
-
-        // POST: Locations/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(long id)
-        {
-            Location location = db.Locations.Find(id);
-            db.Locations.Remove(location);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return Json(db.Locations.ToList());
         }
 
         protected override void Dispose(bool disposing)

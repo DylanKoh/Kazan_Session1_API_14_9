@@ -14,14 +14,20 @@ namespace Kazan_Session1_API_14_9.Controllers
     {
         private Session1Entities db = new Session1Entities();
 
-        // GET: Assets
+        public AssetsController()
+        {
+            db.Configuration.LazyLoadingEnabled = false;
+        }
+        // POST: Assets
+        [HttpPost]
         public ActionResult Index()
         {
-            var assets = db.Assets.Include(a => a.AssetGroup).Include(a => a.DepartmentLocation).Include(a => a.Employee);
-            return View(assets.ToList());
+            var assets = db.Assets;
+            return Json(assets.ToList());
         }
 
-        // GET: Assets/Details/5
+        // POST: Assets/Details/5
+        [HttpPost]
         public ActionResult Details(long? id)
         {
             if (id == null)
@@ -33,99 +39,69 @@ namespace Kazan_Session1_API_14_9.Controllers
             {
                 return HttpNotFound();
             }
-            return View(asset);
-        }
-
-        // GET: Assets/Create
-        public ActionResult Create()
-        {
-            ViewBag.AssetGroupID = new SelectList(db.AssetGroups, "ID", "Name");
-            ViewBag.DepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID");
-            ViewBag.EmployeeID = new SelectList(db.Employees, "ID", "FirstName");
-            return View();
+            return Json(asset);
         }
 
         // POST: Assets/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,AssetSN,AssetName,DepartmentLocationID,EmployeeID,AssetGroupID,Description,WarrantyDate")] Asset asset)
         {
             if (ModelState.IsValid)
             {
                 db.Assets.Add(asset);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return Json("Created Asset!");
             }
 
-            ViewBag.AssetGroupID = new SelectList(db.AssetGroups, "ID", "Name", asset.AssetGroupID);
-            ViewBag.DepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID", asset.DepartmentLocationID);
-            ViewBag.EmployeeID = new SelectList(db.Employees, "ID", "FirstName", asset.EmployeeID);
-            return View(asset);
-        }
-
-        // GET: Assets/Edit/5
-        public ActionResult Edit(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Asset asset = db.Assets.Find(id);
-            if (asset == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.AssetGroupID = new SelectList(db.AssetGroups, "ID", "Name", asset.AssetGroupID);
-            ViewBag.DepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID", asset.DepartmentLocationID);
-            ViewBag.EmployeeID = new SelectList(db.Employees, "ID", "FirstName", asset.EmployeeID);
-            return View(asset);
+            return Json("Unable to create Asset! Please check and try again!");
         }
 
         // POST: Assets/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,AssetSN,AssetName,DepartmentLocationID,EmployeeID,AssetGroupID,Description,WarrantyDate")] Asset asset)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(asset).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return Json("Successfully edited Asset!");
             }
-            ViewBag.AssetGroupID = new SelectList(db.AssetGroups, "ID", "Name", asset.AssetGroupID);
-            ViewBag.DepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID", asset.DepartmentLocationID);
-            ViewBag.EmployeeID = new SelectList(db.Employees, "ID", "FirstName", asset.EmployeeID);
-            return View(asset);
+            return Json("An error occured while editing Asset! Please check and try again!");
         }
 
-        // GET: Assets/Delete/5
-        public ActionResult Delete(long? id)
+        // POST: Assests/GetCustomView
+        [HttpPost]
+        public ActionResult GetCustomView()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Asset asset = db.Assets.Find(id);
-            if (asset == null)
-            {
-                return HttpNotFound();
-            }
-            return View(asset);
+            var getAssetsCustom = (from x in db.Assets
+                                   join y in db.AssetGroups on x.AssetGroupID equals y.ID
+                                   join z in db.DepartmentLocations on x.DepartmentLocationID equals z.ID
+                                   where z.EndDate == null
+                                   join a in db.Departments on z.DepartmentID equals a.ID
+                                   select new
+                                   {
+                                       AssetID = x.ID,
+                                       AssetName = x.AssetName,
+                                       DepartmentName = a.Name,
+                                       AssetSN = x.AssetSN,
+                                       WarrantyDate = x.WarrantyDate,
+                                       AssetGroup = y.Name
+                                   });
+            return Json(getAssetsCustom.ToList());
         }
 
-        // POST: Assets/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(long id)
+        // POST: Assets/GetAllSN
+        [HttpPost]
+        public ActionResult GetAllSN()
         {
-            Asset asset = db.Assets.Find(id);
-            db.Assets.Remove(asset);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            var listOfSN = new List<string>();
+            listOfSN = (from x in db.Assets
+                        select x.AssetSN).ToList();
+            listOfSN.AddRange((from x in db.AssetTransferLogs
+                               select x.FromAssetSN).ToList());
+            listOfSN.AddRange((from x in db.AssetTransferLogs
+                               select x.ToAssetSN).ToList());
+            return Json(listOfSN.Distinct());
         }
 
         protected override void Dispose(bool disposing)
