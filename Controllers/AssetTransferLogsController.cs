@@ -14,6 +14,11 @@ namespace Kazan_Session1_API_14_9.Controllers
     {
         private Session1Entities db = new Session1Entities();
 
+        public AssetTransferLogsController()
+        {
+            db.Configuration.LazyLoadingEnabled = false;
+        }
+
         // POST: AssetTransferLogs
         [HttpPost]
         public ActionResult Index()
@@ -30,77 +35,12 @@ namespace Kazan_Session1_API_14_9.Controllers
             {
                 db.AssetTransferLogs.Add(assetTransferLog);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return Json("Completed Transfer!");
             }
 
-            ViewBag.AssetID = new SelectList(db.Assets, "ID", "AssetSN", assetTransferLog.AssetID);
-            ViewBag.FromDepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID", assetTransferLog.FromDepartmentLocationID);
-            ViewBag.ToDepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID", assetTransferLog.ToDepartmentLocationID);
-            return View(assetTransferLog);
+            return Json("Unable to transfer Asset! Please check and try again!");
         }
 
-        // GET: AssetTransferLogs/Edit/5
-        public ActionResult Edit(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AssetTransferLog assetTransferLog = db.AssetTransferLogs.Find(id);
-            if (assetTransferLog == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.AssetID = new SelectList(db.Assets, "ID", "AssetSN", assetTransferLog.AssetID);
-            ViewBag.FromDepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID", assetTransferLog.FromDepartmentLocationID);
-            ViewBag.ToDepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID", assetTransferLog.ToDepartmentLocationID);
-            return View(assetTransferLog);
-        }
-
-        // POST: AssetTransferLogs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,AssetID,TransferDate,FromAssetSN,ToAssetSN,FromDepartmentLocationID,ToDepartmentLocationID")] AssetTransferLog assetTransferLog)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(assetTransferLog).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.AssetID = new SelectList(db.Assets, "ID", "AssetSN", assetTransferLog.AssetID);
-            ViewBag.FromDepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID", assetTransferLog.FromDepartmentLocationID);
-            ViewBag.ToDepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID", assetTransferLog.ToDepartmentLocationID);
-            return View(assetTransferLog);
-        }
-
-        // GET: AssetTransferLogs/Delete/5
-        public ActionResult Delete(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AssetTransferLog assetTransferLog = db.AssetTransferLogs.Find(id);
-            if (assetTransferLog == null)
-            {
-                return HttpNotFound();
-            }
-            return View(assetTransferLog);
-        }
-
-        // POST: AssetTransferLogs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(long id)
-        {
-            AssetTransferLog assetTransferLog = db.AssetTransferLogs.Find(id);
-            db.AssetTransferLogs.Remove(assetTransferLog);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
 
         protected override void Dispose(bool disposing)
         {
