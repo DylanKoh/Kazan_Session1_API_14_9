@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 using Kazan_Session1_API_14_9;
@@ -48,9 +49,20 @@ namespace Kazan_Session1_API_14_9.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Assets.Add(asset);
-                db.SaveChanges();
-                return Json("Created Asset!");
+                var findAsset = (from x in db.Assets
+                                 where x.AssetName == asset.AssetName && x.DepartmentLocationID == asset.DepartmentLocationID
+                                 select x).FirstOrDefault();
+                if (findAsset != null)
+                {
+                    return Json("Asset already exist in the location of choice!");
+                }
+                else
+                {
+                    db.Assets.Add(asset);
+                    db.SaveChanges();
+                    return Json("Created Asset!");
+                }
+                
             }
 
             return Json("Unable to create Asset! Please check and try again!");

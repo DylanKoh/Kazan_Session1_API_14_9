@@ -14,42 +14,16 @@ namespace Kazan_Session1_API_14_9.Controllers
     {
         private Session1Entities db = new Session1Entities();
 
-        // GET: AssetTransferLogs
+        // POST: AssetTransferLogs
+        [HttpPost]
         public ActionResult Index()
         {
-            var assetTransferLogs = db.AssetTransferLogs.Include(a => a.Asset).Include(a => a.DepartmentLocation).Include(a => a.DepartmentLocation1);
-            return View(assetTransferLogs.ToList());
-        }
-
-        // GET: AssetTransferLogs/Details/5
-        public ActionResult Details(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AssetTransferLog assetTransferLog = db.AssetTransferLogs.Find(id);
-            if (assetTransferLog == null)
-            {
-                return HttpNotFound();
-            }
-            return View(assetTransferLog);
-        }
-
-        // GET: AssetTransferLogs/Create
-        public ActionResult Create()
-        {
-            ViewBag.AssetID = new SelectList(db.Assets, "ID", "AssetSN");
-            ViewBag.FromDepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID");
-            ViewBag.ToDepartmentLocationID = new SelectList(db.DepartmentLocations, "ID", "ID");
-            return View();
+            var assetTransferLogs = db.AssetTransferLogs;
+            return Json(assetTransferLogs.ToList());
         }
 
         // POST: AssetTransferLogs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,AssetID,TransferDate,FromAssetSN,ToAssetSN,FromDepartmentLocationID,ToDepartmentLocationID")] AssetTransferLog assetTransferLog)
         {
             if (ModelState.IsValid)
