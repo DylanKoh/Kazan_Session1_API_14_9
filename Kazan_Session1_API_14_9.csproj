@@ -139,7 +139,14 @@
     <Compile Include="AssetTransferLog.cs">
       <DependentUpon>Session1Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\AssetGroupsController.cs" />
+    <Compile Include="Controllers\AssetsController.cs" />
+    <Compile Include="Controllers\AssetTransferLogsController.cs" />
+    <Compile Include="Controllers\DepartmentLocationsController.cs" />
+    <Compile Include="Controllers\DepartmentsController.cs" />
+    <Compile Include="Controllers\EmployeesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LocationsController.cs" />
     <Compile Include="Department.cs">
       <DependentUpon>Session1Model.tt</DependentUpon>
     </Compile>
@@ -335,6 +342,13 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\AssetGroups\" />
+    <Folder Include="Views\Assets\" />
+    <Folder Include="Views\AssetTransferLogs\" />
+    <Folder Include="Views\DepartmentLocations\" />
+    <Folder Include="Views\Departments\" />
+    <Folder Include="Views\Employees\" />
+    <Folder Include="Views\Locations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
