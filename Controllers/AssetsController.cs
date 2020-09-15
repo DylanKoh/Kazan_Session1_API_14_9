@@ -116,6 +116,16 @@ namespace Kazan_Session1_API_14_9.Controllers
             return Json(listOfSN.Distinct());
         }
 
+        // POST: Assets/GetAssetID?AssetSN={}
+        [HttpPost]
+        public ActionResult GetAssetID(string AssetSN)
+        {
+            var getAssetID = (from x in db.Assets
+                              where x.AssetSN == AssetSN
+                              select x.ID).FirstOrDefault();
+            return Json(getAssetID);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

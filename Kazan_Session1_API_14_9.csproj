@@ -140,6 +140,7 @@
       <DependentUpon>Session1Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AssetGroupsController.cs" />
+    <Compile Include="Controllers\AssetPhotoesController.cs" />
     <Compile Include="Controllers\AssetsController.cs" />
     <Compile Include="Controllers\AssetTransferLogsController.cs" />
     <Compile Include="Controllers\DepartmentLocationsController.cs" />
@@ -343,6 +344,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
     <Folder Include="Views\AssetGroups\" />
+    <Folder Include="Views\AssetPhotoes\" />
     <Folder Include="Views\Assets\" />
     <Folder Include="Views\AssetTransferLogs\" />
     <Folder Include="Views\DepartmentLocations\" />
