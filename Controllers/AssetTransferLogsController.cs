@@ -41,6 +41,23 @@ namespace Kazan_Session1_API_14_9.Controllers
             return Json("Unable to transfer Asset! Please check and try again!");
         }
 
+        // POST: AssetTransferLogs/GetCustomHistory?AssetID={}
+        [HttpPost]
+        public ActionResult GetCustomHistory(long AssetID)
+        {
+            var findHistory = (from x in db.AssetTransferLogs
+                               where x.AssetID == AssetID
+                               select new
+                               {
+                                   TransferDate = x.TransferDate,
+                                   OldDepartment = db.Departments.Where(z => z.ID == (db.DepartmentLocations.Where(y => y.ID == x.FromDepartmentLocationID).Select(y => y.DepartmentID)).FirstOrDefault()).Select(z => z.Name).FirstOrDefault(),
+                                   OldAssetSN = x.FromAssetSN,
+                                   NewDepartment = db.Departments.Where(z => z.ID == (db.DepartmentLocations.Where(y => y.ID == x.ToDepartmentLocationID).Select(y => y.DepartmentID)).FirstOrDefault()).Select(z => z.Name).FirstOrDefault(),
+                                   NewAssetSN = x.ToAssetSN
+                               }).ToList();
+            return Json(findHistory);
+        }
+
 
         protected override void Dispose(bool disposing)
         {
